@@ -1,21 +1,31 @@
 package com.devkmc.Bank_Security_Service.utils;
 
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    private String secretKey = "secretKey"; // 비밀키 설정
+    // @Value로 secretKey를 주입받지 않음
+    private Key secretKey; // 안전한 키 객체를 사용
+
+    public JwtUtil() {
+        // HS256에 적합한 안전한 비밀 키 생성
+        this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    }
 
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1시간 유효
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(secretKey)
                 .compact();
     }
 

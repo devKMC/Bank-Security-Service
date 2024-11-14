@@ -1,11 +1,13 @@
 package com.devkmc.Bank_Security_Service.controller;
 
 import com.devkmc.Bank_Security_Service.service.SecurityUserService;
+import com.devkmc.Bank_Security_Service.entity.SecurityUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:5173")  // 프론트엔드에서 오는 요청 허용
 public class SecurityUserController {
 
     private final SecurityUserService userService;
@@ -16,8 +18,8 @@ public class SecurityUserController {
     }
 
     @PostMapping("/signup")
-    public String registerUser(@RequestParam String username, @RequestParam String password) {
-        userService.registerUser(username, password);
+    public String registerUser(@RequestBody SecurityUser user) {
+        userService.registerUser(user.getUsername(), user.getPassword());
         return "User registered successfully";
     }
 
@@ -26,3 +28,4 @@ public class SecurityUserController {
         return userService.loginUser(username, password);
     }
 }
+
